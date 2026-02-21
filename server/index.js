@@ -45,8 +45,7 @@ async function start() {
 
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`);
-    // Bot temporarily disabled — enable after site works
-    // startBot();
+    startBot();
   });
 }
 
