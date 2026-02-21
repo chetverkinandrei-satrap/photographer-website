@@ -55,10 +55,13 @@ function startBot() {
     return;
   }
 
-  const bot = new TelegramBot(token, { polling: true });
-  const photographerChatId = process.env.TELEGRAM_CHAT_ID;
+  try {
+    const bot = new TelegramBot(token, {
+      polling: { interval: 1000, autoStart: true, params: { timeout: 10 } }
+    });
+    const photographerChatId = process.env.TELEGRAM_CHAT_ID;
 
-  console.log('Telegram bot started (polling)');
+    console.log('Telegram bot started (polling)');
 
   bot.onText(/\/start/, (msg) => {
     clearSession(msg.chat.id);
@@ -209,6 +212,10 @@ function startBot() {
   bot.on('polling_error', (err) => {
     console.error('Bot polling error:', err.message);
   });
+
+  } catch (err) {
+    console.error('Telegram bot failed to start:', err.message);
+  }
 }
 
 module.exports = { startBot };

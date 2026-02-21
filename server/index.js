@@ -41,10 +41,9 @@ async function start() {
 
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`);
+    // Start Telegram bot only after HTTP server is ready
+    startBot();
   });
-
-  // Start Telegram bot
-  startBot();
 }
 
 start().catch((err) => {
