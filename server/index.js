@@ -5,6 +5,10 @@ const path = require('path');
 const { initDb } = require('./db');
 const { startBot } = require('./bot');
 
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled rejection:', err.message);
+});
+
 async function start() {
   await initDb();
 

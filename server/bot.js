@@ -55,9 +55,14 @@ function startBot() {
     return;
   }
 
+  // Delay bot start to avoid 409 conflicts during Railway restarts
+  setTimeout(() => { actualStartBot(token); }, 5000);
+}
+
+function actualStartBot(token) {
   try {
     const bot = new TelegramBot(token, {
-      polling: { interval: 1000, autoStart: true, params: { timeout: 10 } }
+      polling: { interval: 2000, autoStart: true, params: { timeout: 10 } }
     });
     const photographerChatId = process.env.TELEGRAM_CHAT_ID;
 
