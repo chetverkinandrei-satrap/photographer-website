@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import {
   login, logout, isLoggedIn,
   fetchSeries, createSeries, updateSeries, deleteSeries,
-  uploadPhoto,
+  uploadPhoto, deletePhoto,
   fetchReviews, moderateReview, deleteReview,
   fetchBookings, updateBookingStatus,
 } from '../api';
+import { formatDatePretty } from '../utils/formatDate';
 
 function LoginForm({ onLogin }) {
   const [password, setPassword] = useState('');
@@ -76,10 +77,23 @@ function SeriesManager() {
     setDesc(s.description);
   }
 
+  const [uploading, setUploading] = useState(false);
+
   async function handlePhotoUpload(e, seriesId) {
-    const file = e.target.files[0];
-    if (!file) return;
-    await uploadPhoto(file, seriesId);
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    setUploading(true);
+    for (const file of files) {
+      await uploadPhoto(file, seriesId);
+    }
+    setUploading(false);
+    e.target.value = '';
+    loadSeries();
+  }
+
+  async function handleDeletePhoto(seriesId, photoUrl) {
+    if (!confirm('Удалить это фото?')) return;
+    await deletePhoto(seriesId, photoUrl);
     loadSeries();
   }
 
@@ -109,16 +123,23 @@ function SeriesManager() {
             {s.photo_urls && s.photo_urls.length > 0 && (
               <div className="admin-card__photos">
                 {s.photo_urls.map((url, i) => (
-                  <img key={i} src={url} alt="" className="admin-thumb" />
+                  <div key={i} className="admin-thumb-wrap">
+                    <img src={url} alt="" className="admin-thumb" />
+                    <button
+                      className="admin-thumb__delete"
+                      onClick={() => handleDeletePhoto(s.id, url)}
+                      title="Удалить фото"
+                    >&times;</button>
+                  </div>
                 ))}
               </div>
             )}
             <div className="admin-card__actions">
               <button className="btn btn--small" onClick={() => startEdit(s)}>Редактировать</button>
               <button className="btn btn--small btn--danger" onClick={() => handleDelete(s.id)}>Удалить</button>
-              <label className="btn btn--small btn--upload">
-                Загрузить фото
-                <input type="file" accept="image/*" hidden onChange={(e) => handlePhotoUpload(e, s.id)} />
+              <label className={`btn btn--small btn--upload ${uploading ? 'uploading' : ''}`}>
+                {uploading ? 'Загрузка...' : 'Загрузить фото'}
+                <input type="file" accept="image/*" multiple hidden onChange={(e) => handlePhotoUpload(e, s.id)} disabled={uploading} />
               </label>
             </div>
           </div>
@@ -213,7 +234,7 @@ function BookingsManager() {
                 {statusLabels[b.status] || b.status}
               </span>
             </div>
-            <p>Дата: {b.date} | Тип: {b.series_type || '—'} | Тел: {b.client_phone || '—'}</p>
+            <p>Дата: {formatDatePretty(b.date)} | Тип: {b.series_type || '—'} | Тел: {b.client_phone || '—'}</p>
             <div className="admin-card__actions">
               {b.status === 'new' && (
                 <button className="btn btn--small btn--success" onClick={() => handleConfirm(b.id)}>

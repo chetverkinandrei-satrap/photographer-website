@@ -51,6 +51,7 @@ export default function SeriesCard({ series }) {
               <>
                 <button className="slider-arrow slider-arrow--left" onClick={prevSlide}>&#8249;</button>
                 <button className="slider-arrow slider-arrow--right" onClick={nextSlide}>&#8250;</button>
+                <span className="series-card__photo-count">{currentSlide + 1} / {photos.length}</span>
                 <div className="slider-dots">
                   {photos.map((_, i) => (
                     <span

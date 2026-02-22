@@ -118,6 +118,15 @@ export async function uploadPhoto(file, seriesId) {
   return res.json();
 }
 
+export async function deletePhoto(seriesId, photoUrl) {
+  const res = await fetch(`${BASE}/api/photos`, {
+    method: 'DELETE',
+    headers: getHeaders(true),
+    body: JSON.stringify({ series_id: seriesId, photo_url: photoUrl }),
+  });
+  return res.json();
+}
+
 export async function login(password) {
   const res = await fetch(`${BASE}/api/auth/login`, {
     method: 'POST',

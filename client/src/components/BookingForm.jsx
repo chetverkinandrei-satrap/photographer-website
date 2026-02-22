@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Calendar from './Calendar';
 import { createBooking } from '../api';
+import { formatDatePretty } from '../utils/formatDate';
 
 export default function BookingForm() {
   const [form, setForm] = useState({ client_name: '', client_phone: '', series_type: '' });
@@ -57,7 +58,7 @@ export default function BookingForm() {
               <option value="other">Другое</option>
             </select>
             {selectedDate && (
-              <p className="booking__date">Выбранная дата: <strong>{selectedDate}</strong></p>
+              <p className="booking__date">Выбранная дата: <strong>{formatDatePretty(selectedDate)}</strong></p>
             )}
             <button type="submit" className="btn btn--primary" disabled={sending}>
               {sending ? 'Отправка...' : 'Отправить заявку'}
