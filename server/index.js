@@ -25,6 +25,19 @@ async function start() {
   app.use('/api/bookings', require('./routes/bookings'));
   app.use('/api/photos', require('./routes/photos'));
 
+  // Cloudinary status (temporary debug)
+  app.get('/api/debug/cloudinary', (req, res) => {
+    const name = process.env.CLOUDINARY_CLOUD_NAME || '';
+    const key = process.env.CLOUDINARY_API_KEY || '';
+    const { isConfigured } = require('./cloudinary');
+    res.json({
+      cloud_name_set: !!name && name !== 'your_cloud_name',
+      api_key_set: !!key && key !== 'your_api_key',
+      configured: isConfigured(),
+      cloud_name_preview: name ? name.slice(0, 4) + '...' : '(empty)',
+    });
+  });
+
   // Auth endpoint
   app.post('/api/auth/login', (req, res) => {
     const { password } = req.body;
